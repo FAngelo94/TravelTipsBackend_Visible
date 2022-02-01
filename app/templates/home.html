@@ -1,0 +1,19 @@
+<html>
+  <head>
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{{ url_for('static', filename='home.css') }}"
+    />
+    <script
+      type="text/javascript"
+      src="{{ url_for('static', filename = 'home.js') }}"
+    ></script>
+  </head>
+  <body>
+    <h1>Server Flask for TravelTips Backend</h1>
+    <p>{{ message }}</p>
+    <button onclick="sayHello()">Hello Alert</button>
+    <img src="{{ url_for('static', filename = 'images/0.png') }}" alt="User Image" width="200" height="85">
+  </body>
+</html>

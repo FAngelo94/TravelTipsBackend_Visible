@@ -1,0 +1,21 @@
+it = {
+    "Error": "Errore",
+    "Insert a not empty password": "Inserisci una password non vuota",
+    "Insert a not empty username": "Inserisci un username non vuota",
+    "Insert a not empty email": "Inserisci una email non vuota",
+    "This Email registered already": "Questa email è già registrata",
+    "This email isn't registered": "Questa email non è registrata",
+    "Wrong password": "Password errata",
+    "Logout successfully": "Logout avvenuto con successo",
+    "Missing token": "Token mancante",
+    "User removed successfully": "Utente rimosso con successo",
+    "Registration success": "Registrazione avvenuta",
+    "User not found": "Utente non trovato",
+    "Compile all fields": "Compila tutti i campi",
+    "This city is already present in your list": "Questa città è già presente nella tua lista",
+    "Password changed": "Password cambiata",
+    "Image type not valid": "Tipo di immagine non valida",
+    "Recover password": "Recupera password",
+    "Press this link to reset your password: ": "Clicca questo link per resettare la tua password: ",
+    "Check your email to set a new password": "Controlla la tua email per settare una nuova password"
+}

@@ -1,0 +1,2349 @@
+swagger: "2.0"
+info:
+  description: This is the swagger file that goes with our server code, all api start with "url:5000/api/<name>", for example "http://localhost:5000/api/user"
+  version: "1.0.0"
+  title: Swagger ReST Article
+consumes:
+  - application/json
+produces:
+  - application/json
+
+basePath: /api
+      
+# Paths supported by the server application
+paths:
+  /user:
+    get:
+      operationId: api.user.read_list
+      tags:
+        - User
+      summary: Read list of users
+      description: Read list of N users if user that call this API is not logged, otherwise return the first N users giving importance to users near the user that call this API. For this reason we pass to this API also the id of user that call it
+      parameters:
+      - name: token
+        in: header
+        description: Token generated for user during login
+        required: False
+        type: string
+      - name: id
+        in: header
+        description: Id that identify user
+        required: False
+        type: integer
+      - name: language
+        in: query
+        description: Language using in client
+        required: True
+        type: string
+      responses:
+        200:
+          description: Successfully read people list operation
+          schema:
+            type: object
+            properties:
+              status: 
+                type: integer
+                description: status returned by api
+              users:
+                type: array
+                description: list of N users with basic information show in travelers page
+                items:
+                  type: object
+                  properties:
+                    id: 
+                      type: integer
+                      description: Id of user
+                    username: 
+                      type: string
+                      description: username of user
+                    image: 
+                      type: string
+                      description: path of profile image of user
+                    languages:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          language:
+                            type: string
+                            description: name of the language
+                    home:
+                      type: object
+                      properties:
+                        country:
+                          type: string
+                          description: country of locality visited by user
+                        provice:
+                          type: string
+                          description: provice of locality visited by user
+                        city:
+                          type: string
+                          description: city of locality visited by user
+                
+    post:
+      operationId: api.user.create
+      tags:
+        - User
+      summary: Create a new user
+      description: Create a new user with basic information
+      parameters:
+        - name: language
+          in: query
+          description: Language using in client
+          required: True
+          type: string
+        - name: data
+          in: body
+          description: all basic datas for the creation of a new user
+          required: True
+          schema:
+            type: object
+            properties:
+              email:
+                type: string
+              username:
+                type: string
+              password:
+                type: string
+      responses:
+        201:
+          description: Successfully created new user
+          schema:
+            type: object
+            properties:
+              message: 
+                type: string
+                description: message sent by server
+              status: 
+                type: integer
+                description: status returned by api
+  
+    delete:
+      operationId: api.user.delete
+      tags:
+        - User
+      summary: Delete 1 user
+      description: Delete the user with the id passed
+      parameters:
+        - name: language
+          in: query
+          description: Language using in client
+          required: True
+          type: string
+        - name: token
+          in: header
+          type: string
+          description: Token created when user logged, send to verify if it is valid
+          required: True
+      responses:
+        200: 
+          description: Successfully deleted person from user table
+          schema:
+            type: object
+            properties:
+              message: 
+                type: string
+                description: message sent by server
+              status: 
+                type: integer
+                description: status returned by api
+          
+  /user/profileImage:
+    post:
+      operationId: api.user.update_profile_image
+      tags:
+        - User
+      summary: Update profile image
+      description: Update profile image, if nothing is passed it just remove the current profile image
+      parameters:
+        - name: token
+          in: header
+          type: string
+          description: Token created when user logged
+          required: True
+        - name: id
+          in: header
+          type: integer
+          description: User Id connected to the token
+          required: True
+        - name: language
+          in: query
+          description: Language using in client
+          type: string
+          required: True
+        - name: data
+          in: body
+          description: Image in base64 format
+          required: False
+          schema:
+            type: object
+            properties:
+              image:
+                type: string
+                description: Image in base64 format
+      responses:
+        200:
+          description: Successfully updated profile image
+          schema:
+            type: object
+            properties:
+              message: 
+                type: string
+                description: message sent by server
+              status: 
+                type: integer
+                description: status returned by api
+              image:
+                type: string
+                description: name of image and extension
+
+  /user/{id}:
+    get:
+      operationId: api.user.read_all_details
+      tags:
+        - User
+      summary: Details about 1 user
+      description: Read all details about 1 single user
+      parameters:
+        - name: language
+          in: query
+          description: Language using in client
+          required: True
+          type: string
+        - name: id
+          in: path
+          description: id that identify an user inside the DB I want to get details
+          type: integer
+          required: True
+      responses:
+        200:
+          description: Successfully read user details
+          schema:
+            type: object
+            properties:
+              status: 
+                type: integer
+                description: status returned by api
+              user:
+                type: object
+                properties:
+                  id: 
+                    type: integer
+                    description: Id of user
+                  username: 
+                    type: string
+                    description: username of user
+                  image: 
+                    type: string
+                    description: path of profile image of user
+                  experiences:
+                    type: integer
+                    description: number of experiences created by the user
+                  itineraries:
+                    type: integer
+                    description: number of itineraries created by the user
+                  matchings:
+                    type: integer
+                    description: number of matchings user did
+                  tips:
+                    type: integer
+                    description: number of tips created by the user
+                  home:
+                    type: object
+                    properties:
+                      country:
+                        type: string
+                        description: country of locality visited by user
+                      provice:
+                        type: string
+                        description: provice of locality visited by user
+                      city:
+                        type: string
+                        description: city of locality visited by user
+                  languages:
+                    type: array
+                    description: list of languages user can speak
+                    items:
+                      type: object
+                      properties:
+                        language:
+                          type: string
+                          description: name of the language
+                  localities:
+                    type: array
+                    description: array of localities visited by the user
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          description: id that identify a locality
+                        country:
+                          type: string
+                          description: country of locality visited by user
+                        provice:
+                          type: string
+                          description: provice of locality visited by user
+                        city:
+                          type: string
+                          description: city of locality visited by user
+                  interests:
+                    type: array
+                    description: array of the interests of the user
+                    items:
+                      type: object
+                      properties:
+                        interest:
+                          type: string
+                          description: name of the interest
+
+  /user/login:
+    post:
+      operationId: api.user.login
+      tags:
+        - User
+      summary: Logs user in the system
+      description: Logs user in the system
+      parameters:
+        - name: language
+          in: query
+          description: Language using in client
+          required: True
+          type: string
+        - name: data
+          in: body
+          description: All basic datas for the login on user
+          required: True
+          schema:
+            type: object
+            properties:
+              email:
+                type: string
+              password:
+                type: string
+      responses:
+        200:
+          description: Login successfully
+          schema:
+            type: object
+            properties:
+              token: 
+                type: string
+                description: token generated during login
+              id: 
+                type: integer
+                description: id that identify the user
+              status: 
+                type: integer
+                description: status returned by api
+
+  /user/logout:
+    post:
+      operationId: api.user.logout
+      tags:
+        - User
+      summary: Logs user out of the system
+      description: Logs user out of the system
+      parameters:
+        - name: token
+          in: header
+          description: Token generated for user during login
+          required: True
+          type: string
+        - name: id
+          in: header
+          type: integer
+          description: User Id connected to the token
+          required: True
+        - name: language
+          in: query
+          description: Language using in client
+          required: True
+          type: string
+      responses:
+        200:
+          description: Logout successfully
+          schema:
+            type: object
+            properties:
+              message: 
+                type: string
+                description: message sent by server
+              status: 
+                type: integer
+                description: status returned by api
+   
+  /user/interest:
+    put:
+      operationId: api.user.put_interest
+      tags:
+        - User
+      summary: Add 1 interest 
+      description: Add 1 interest to the user that call api
+      parameters:
+        - name: token
+          in: header
+          type: string
+          description: Token created when user logged
+          required: True
+        - name: id
+          in: header
+          type: integer
+          description: User Id connected to the token
+          required: True
+        - name: language
+          in: query
+          description: Language using in client
+          type: string
+          required: True
+        - name: interest
+          in: query
+          description: Interest we want to add
+          type: string
+          required: True
+      responses:
+        200:
+          description: Successfully added new interest
+          schema:
+            type: object
+            properties:
+              message: 
+                type: string
+                description: message sent by server
+              status: 
+                type: integer
+                description: status returned by api
+  
+
+    delete:
+      operationId: api.user.delete_interest
+      tags:
+        - User
+      summary: Delete 1 interest 
+      description: Delete 1 interest to the user that call api
+      parameters:
+        - name: token
+          in: header
+          type: string
+          description: Token created when user logged
+          required: True
+        - name: id
+          in: header
+          type: integer
+          description: User Id connected to the token
+          required: True
+        - name: language
+          in: query
+          description: Language using in client
+          type: string
+          required: True
+        - name: interest
+          in: query
+          description: Interest we want to delete
+          type: string
+          required: True
+      responses:
+        200: 
+          description: Successfully removed interest
+          schema:
+            type: object
+            properties:
+              message: 
+                type: string
+                description: message sent by server
+              status: 
+                type: integer
+                description: status returned by api
+  
+  /user/languages:
+    put:
+      operationId: api.user.update_languages
+      tags:
+        - User
+      summary: Update languages spoken 
+      description: Update languages spoken by 1 user
+      parameters:
+        - name: token
+          in: header
+          type: string
+          description: Token created when user logged
+          required: True
+        - name: id
+          in: header
+          type: integer
+          description: User Id connected to the token
+          required: True
+        - name: language
+          in: query
+          description: Language using in client
+          type: string
+          required: True
+        - name: languages
+          in: body
+          description: array of languages we want to add
+          schema:
+            type: array
+            items:
+              type: string
+          required: True
+      responses:
+        200:
+          description: Successfully updated new languages
+          schema:
+            type: object
+            properties:
+              message: 
+                type: string
+                description: message sent by server
+              status: 
+                type: integer
+                description: status returned by api
+              languages: 
+                type: string
+                description: string with all languages user can speak divided by comma
+
+  /user/home:
+    put:
+      operationId: api.user.update_home
+      tags:
+        - User
+      summary: Update home visited 
+      description: Update home of the user that call api
+      parameters:
+        - name: token
+          in: header
+          type: string
+          description: Token created when user logged
+          required: True
+        - name: id
+          in: header
+          type: integer
+          description: User Id connected to the token
+          required: True
+        - name: language
+          in: query
+          description: Language using in client
+          type: string
+          required: True
+        - name: locality
+          in: body
+          description: all basic datas of a locality (home in this case)
+          required: True
+          schema:
+            type: object
+            properties:
+              country:
+                type: string
+              province:
+                type: string
+              city:
+                type: string
+      responses:
+        200:
+          description: Successfully update home
+          schema:
+            type: object
+            properties:
+              message: 
+                type: string
+                description: message sent by server
+              status: 
+                type: integer
+                description: status returned by api
+
+  /user/localityVisited:
+    put:
+      operationId: api.user.put_locality
+      tags:
+        - User
+      summary: Add 1 locality visited 
+      description: Add 1 locality visited to the user that call api
+      parameters:
+        - name: token
+          in: header
+          type: string
+          description: Token created when user logged
+          required: True
+        - name: id
+          in: header
+          type: integer
+          description: User Id connected to the token
+          required: True
+        - name: language
+          in: query
+          description: Language using in client
+          type: string
+          required: True
+        - name: locality
+          in: body
+          description: all basic datas of a locality (home in this case)
+          required: True
+          schema:
+            type: object
+            properties:
+              country:
+                type: string
+              province:
+                type: string
+              city:
+                type: string
+      responses:
+        200:
+          description: Successfully added new location visited
+          schema:
+            type: object
+            properties:
+              message: 
+                type: string
+                description: message sent by server
+              status: 
+                type: integer
+                description: status returned by api
+              id: 
+                type: integer
+                description: id that identify a specific locality
+  
+
+    delete:
+      operationId: api.user.delete_locality
+      tags:
+        - User
+      summary: Delete 1 locality visited 
+      description: Delete 1 locality visited to the user that call api
+      parameters:
+        - name: token
+          in: header
+          type: string
+          description: Token created when user logged
+          required: True
+        - name: id
+          in: header
+          type: integer
+          description: User Id connected to the token
+          required: True
+        - name: language
+          in: query
+          description: Language using in client
+          type: string
+          required: True
+        - name: locality
+          in: query
+          description: Id of locality we want to delete
+          type: integer
+          required: True
+      responses:
+        200: 
+          description: Successfully removed location visited
+          schema:
+            type: object
+            properties:
+              message: 
+                type: string
+                description: message sent by server
+              status: 
+                type: integer
+                description: status returned by api
+  
+  /user/password:
+    put:
+      operationId: api.user.update_password
+      tags:
+        - User
+      summary: Update password of user
+      description: Update password of user
+      parameters:
+        - name: token
+          in: header
+          type: string
+          description: Token created when user logged
+          required: True
+        - name: id
+          in: header
+          type: integer
+          description: User Id connected to the token
+          required: True
+        - name: language
+          in: query
+          description: Language using in client
+          type: string
+          required: True
+        - name: data
+          in: body
+          description: new password that user want
+          required: True
+          schema:
+            type: object
+            properties:
+              oldPassword:
+                type: string
+              newPassword:
+                type: string
+      responses:
+        200:
+          description: Successfully updated password
+          schema:
+            type: object
+            properties:
+              message: 
+                type: string
+                description: message sent by server
+              status: 
+                type: integer
+                description: status returned by api
+
+  /user/recoverPassword:
+    get:
+      operationId: api.user.recover_password
+      tags:
+        - User
+      summary: Recover password
+      description: Send an email to reset the password
+      parameters:
+        - name: email
+          in: query
+          type: string
+          description: Email we want recover the password
+          required: True
+        - name: language
+          in: query
+          description: Language using in client
+          type: string
+          required: True
+      responses:
+        200:
+          description: Successfully send the email to reset the password
+          schema:
+            type: object
+            properties:
+              message: 
+                type: string
+                description: message sent by server
+              status: 
+                type: integer
+                description: status returned by api
+
+  /user/resetPassword:
+    get:
+      operationId: api.user.reset_password
+      tags:
+        - User
+      summary: Reset password
+      description: Create a new password for the user and send it to the email
+      parameters:
+        - name: id
+          in: query
+          type: string
+          description: User Id we want reset password
+          required: True
+        - name: tokenPass
+          in: query
+          type: string
+          description: Token generated to validate the reset of the password
+          required: True
+        - name: language
+          in: query
+          type: string
+          description: Language using in client
+          required: True
+      responses:
+        200:
+          description: Successfully reseted password
+          schema:
+            type: object
+            properties:
+              message: 
+                type: string
+                description: message sent by server
+              status: 
+                type: integer
+                description: status returned by api
+
+  /user/username:
+    put:
+      operationId: api.user.update_username
+      tags:
+        - User
+      summary: Update username of user
+      description: Update username of user
+      parameters:
+        - name: token
+          in: header
+          type: string
+          description: Token created when user logged
+          required: True
+        - name: id
+          in: header
+          type: integer
+          description: User Id connected to the token
+          required: True
+        - name: language
+          in: query
+          description: Language using in client
+          type: string
+          required: True
+        - name: username
+          in: query
+          description: New username user want
+          type: string
+          required: True
+      responses:
+        200:
+          description: Successfully updated username
+          schema:
+            type: object
+            properties:
+              message: 
+                type: string
+                description: message sent by server
+              status: 
+                type: integer
+                description: status returned by api
+              
+  /user/star:
+    put:
+      operationId: api.user.star
+      tags:
+        - User
+      summary: Follow/Unfollow an user
+      description: Follow/Unfollow an user
+      parameters:
+        - name: token
+          in: header
+          type: string
+          description: Token created when user logged
+          required: True
+        - name: id
+          in: header
+          type: integer
+          description: User Id connected to the token
+          required: True
+        - name: language
+          in: query
+          description: Language using in client
+          type: string
+          required: True
+        - name: otherUser
+          in: query
+          description: Id of user that we want follow or unfollow
+          type: integer
+          required: True
+        - name: valueStar
+          in: query
+          description: based on this value we know if user follow or unfollow the target user (true=follow, false=unfollow)
+          type: boolean
+          required: True
+      responses:
+        200:
+          description: Successfully followed or unfollowed user
+          schema:
+            type: object
+            properties:
+              message: 
+                type: string
+                description: message sent by server
+              status: 
+                type: integer
+                description: status returned by api
+
+  /tip/list:
+    post:
+      operationId: api.tip.read_list
+      tags:
+        - Tip
+      summary: Get list of tips
+      description: Get list of tips appling filters
+      parameters:
+        - name: token
+          in: header
+          type: string
+          description: Token created when user logged
+          required: False
+        - name: language
+          in: query
+          description: Language using in client
+          type: string
+          required: True
+        - name: data
+          in: body
+          description: Filters passed by the client to get only the desired tips
+          required: False
+          schema:
+            type: object
+            properties:
+              own:
+                type: boolean
+                description: true if user want to se only own tips
+              username:
+                type: string
+              country:
+                type: string
+              province:
+                type: string
+              city:
+                type: string
+              tags:
+                type: string
+                description: list of tag separated by comma
+              dates:
+                type: string
+              text:
+                type: string
+                description: look for a word in title or text
+              languages:
+                type: string
+                description: look for tips written in the same language/languages
+      responses:
+        200:
+          description: Tips list successfully get
+
+  /tip:
+    post:
+      operationId: api.tip.create
+      tags:
+        - Tip
+      summary: Create 1 new tip
+      description: Create 1 new tip
+      parameters:
+        - name: language
+          in: query
+          description: Language using in client
+          type: string
+          required: True
+        - name: token
+          in: header
+          type: string
+          description: Token created when user logged
+          required: True
+        - name: id
+          in: header
+          type: integer
+          description: User Id connected to the token
+          required: True
+        - name: data
+          in: body
+          description: Data passed to create a new tip
+          required: True
+          schema:
+            type: object
+            properties:
+              title:
+                type: string
+              text:
+                type: string
+              country:
+                type: string
+              province:
+                type: string
+              city:
+                type: string
+              languages:
+                type: string
+                description: list of languages separated by comma
+              tags:
+                type: string
+                description: list of tag separated by comma
+      responses:
+        200:
+          description: New tip created
+
+    put:
+      operationId: api.tip.update
+      tags:
+        - Tip
+      summary: Update 1 existing  tip
+      description: Update 1 existing tip
+      parameters:
+        - name: token
+          in: header
+          type: string
+          description: Token created when user logged
+          required: True
+        - name: id
+          in: header
+          type: integer
+          description: User Id connected to the token
+          required: True
+        - name: language
+          in: query
+          description: Language using in client
+          type: string
+          required: True
+        - name: data
+          in: body
+          description: Data passed to create a new tip
+          required: True
+          schema:
+            type: object
+            properties:
+              id:
+                type: integer
+              title:
+                type: string
+              text:
+                type: string
+              country:
+                type: string
+              province:
+                type: string
+              city:
+                type: string
+              languages:
+                type: string
+                description: list of languages separated by comma
+              tags:
+                type: string
+                description: list of tag separated by comma
+      responses:
+          200:
+            description: Tip updated successfully
+
+    delete:
+      operationId: api.tip.delete
+      tags:
+        - Tip
+      summary: Update 1 existing  tip
+      description: Update 1 existing tip
+      parameters:
+        - name: token
+          in: header
+          type: string
+          description: Token created when user logged
+          required: True
+        - name: id
+          in: header
+          type: integer
+          description: User Id connected to the token
+          required: True
+        - name: language
+          in: query
+          description: Language using in client
+          type: string
+          required: True
+        - name: idTip
+          in: query
+          description: id that identify the Tip
+          type: integer
+          required: True
+      responses:
+          200:
+            description: Tip deleted successfully
+
+  /tip/vote:
+    put:
+      operationId: api.tip.update_vote
+      tags:
+        - Tip
+      summary: Update 1 vote
+      description: Update 1 vote user does for 1 tip
+      parameters:
+        - name: token
+          in: header
+          type: string
+          description: Token created when user logged
+          required: True
+        - name: id
+          in: header
+          type: integer
+          description: User Id connected to the token
+          required: True
+        - name: language
+          in: query
+          description: Language using in client
+          type: string
+          required: True
+        - name: idTip
+          in: query
+          description: Id that identify the tip voted
+          type: integer
+          required: True
+        - name: vote
+          in: query
+          description: Vote given (from 0 to 4)
+          type: integer
+          required: False
+      responses:
+          200:
+            description: Vote for tip updated successfully
+
+  /itinerary/list:
+    post:
+      operationId: api.itinerary.read_list
+      tags:
+        - Itinerary
+      summary: Get list of itineraries
+      description: Get list of itineraries appling filters
+      parameters:
+        - name: token
+          in: header
+          type: string
+          description: Token created when user logged
+          required: False
+        - name: language
+          in: query
+          description: Language using in client
+          type: string
+          required: True
+        - name: data
+          in: body
+          description: Filters passed by the client to get only the desired itineraries
+          required: False
+          schema:
+            type: object
+            properties:
+              own:
+                type: boolean
+                description: true if user want to se only own itineraries
+              username:
+                type: string
+              country:
+                type: string
+              province:
+                type: string
+              city:
+                type: string
+              tags:
+                type: string
+                description: list of tag separated by comma
+              dates:
+                type: string
+              text:
+                type: string
+                description: look for a word in title or text
+              languages:
+                type: string
+                description: look for itineraries written in the same language/languages
+      responses:
+        200:
+          description: Tips list successfully get
+
+  /itinerary:
+    post:
+      operationId: api.itinerary.create
+      tags:
+        - Itinerary
+      summary: Create 1 new itinerary
+      description: Create 1 new itinerary
+      parameters:
+        - name: language
+          in: query
+          description: Language using in client
+          type: string
+          required: True
+        - name: token
+          in: header
+          type: string
+          description: Token created when user logged
+          required: True
+        - name: id
+          in: header
+          type: integer
+          description: User Id connected to the token
+          required: True
+        - name: data
+          in: body
+          description: Data passed to create a new itinerary
+          required: True
+          schema:
+            type: object
+            properties:
+              title:
+                type: string
+              text:
+                type: string
+              longText:
+                type: string
+              country:
+                type: string
+              province:
+                type: string
+              city:
+                type: string
+              languages:
+                type: string
+                description: list of languages separated by comma
+              tags:
+                type: string
+                description: list of tag separated by comma
+              images:
+                type: array
+                items:
+                  type: string
+      responses:
+        200:
+          description: New itinerary created
+
+    put:
+      operationId: api.itinerary.update
+      tags:
+        - Itinerary
+      summary: Update 1 existing  itinerary
+      description: Update 1 existing itinerary
+      parameters:
+        - name: token
+          in: header
+          type: string
+          description: Token created when user logged
+          required: True
+        - name: id
+          in: header
+          type: integer
+          description: User Id connected to the token
+          required: True
+        - name: language
+          in: query
+          description: Language using in client
+          type: string
+          required: True
+        - name: data
+          in: body
+          description: Data passed to create a new itinerary
+          required: True
+          schema:
+            type: object
+            properties:
+              id:
+                type: integer
+              title:
+                type: string
+              text:
+                type: string
+              longText:
+                type: string
+              country:
+                type: string
+              province:
+                type: string
+              city:
+                type: string
+              languages:
+                type: string
+                description: list of languages separated by comma
+              tags:
+                type: string
+                description: list of tag separated by comma
+              images:
+                type: array
+                items:
+                  type: string
+      responses:
+          200:
+            description: Itinerary updated successfully
+
+    delete:
+      operationId: api.itinerary.delete
+      tags:
+        - Itinerary
+      summary: Update 1 existing  itinerary
+      description: Update 1 existing itinerary
+      parameters:
+        - name: token
+          in: header
+          type: string
+          description: Token created when user logged
+          required: True
+        - name: id
+          in: header
+          type: integer
+          description: User Id connected to the token
+          required: True
+        - name: language
+          in: query
+          description: Language using in client
+          type: string
+          required: True
+        - name: idItinerary
+          in: query
+          description: id that identify the Itinerary
+          type: integer
+          required: True
+      responses:
+          200:
+            description: Itinerary deleted successfully
+
+  /itinerary/vote:
+    put:
+      operationId: api.itinerary.update_vote
+      tags:
+        - Itinerary
+      summary: Update 1 vote
+      description: Update 1 vote user does for 1 itinerary
+      parameters:
+        - name: token
+          in: header
+          type: string
+          description: Token created when user logged
+          required: True
+        - name: id
+          in: header
+          type: integer
+          description: User Id connected to the token
+          required: True
+        - name: language
+          in: query
+          description: Language using in client
+          type: string
+          required: True
+        - name: idItinerary
+          in: query
+          description: Id that identify the itinerary voted
+          type: integer
+          required: True
+        - name: vote
+          in: query
+          description: Vote given (from 0 to 4)
+          type: integer
+          required: False
+      responses:
+          200:
+            description: Vote for itinerary updated successfully 
+
+  /experience/list:
+    post:
+      operationId: api.experience.read_list
+      tags:
+        - Experience
+      summary: Get list of experiences
+      description: Get list of experiences appling filters
+      parameters:
+        - name: token
+          in: header
+          type: string
+          description: Token created when user logged
+          required: False
+        - name: language
+          in: query
+          description: Language using in client
+          type: string
+          required: True
+        - name: data
+          in: body
+          description: Filters passed by the client to get only the desired experiences
+          required: False
+          schema:
+            type: object
+            properties:
+              own:
+                type: boolean
+                description: true if user want to se only own experiences
+              username:
+                type: string
+              country:
+                type: string
+              province:
+                type: string
+              city:
+                type: string
+              tags:
+                type: string
+                description: list of tag separated by comma
+              dates:
+                type: string
+              text:
+                type: string
+                description: look for a word in title or text
+              languages:
+                type: string
+                description: look for experiences written in the same language/languages
+      responses:
+        200:
+          description: Tips list successfully get
+
+  /experience/listBooked:
+    post:
+      operationId: api.experience.read_list_booked
+      tags:
+        - Experience
+      summary: Get list of experiences
+      description: Get list of experiences appling filters
+      parameters:
+        - name: token
+          in: header
+          type: string
+          description: Token created when user logged
+          required: True
+        - name: language
+          in: query
+          description: Language using in client
+          type: string
+          required: True
+        - name: id
+          in: header
+          type: integer
+          description: User Id connected to the token
+          required: True
+        - name: data
+          in: body
+          description: Filters passed by the client to get only the desired experiences
+          required: False
+          schema:
+            type: object
+            properties:
+              own:
+                type: boolean
+                description: true if user want to se only own experiences
+              username:
+                type: string
+              country:
+                type: string
+              province:
+                type: string
+              city:
+                type: string
+              tags:
+                type: string
+                description: list of tag separated by comma
+              dates:
+                type: string
+              text:
+                type: string
+                description: look for a word in title or text
+              languages:
+                type: string
+                description: look for experiences written in the same language/languages
+      responses:
+        200:
+          description: Tips list successfully get
+
+  /experience:
+    post:
+      operationId: api.experience.create
+      tags:
+        - Experience
+      summary: Create 1 new experience
+      description: Create 1 new experience
+      parameters:
+        - name: language
+          in: query
+          description: Language using in client
+          type: string
+          required: True
+        - name: token
+          in: header
+          type: string
+          description: Token created when user logged
+          required: True
+        - name: id
+          in: header
+          type: integer
+          description: User Id connected to the token
+          required: True
+        - name: data
+          in: body
+          description: Data passed to create a new experience
+          required: True
+          schema:
+            type: object
+            properties:
+              title:
+                type: string
+              text:
+                type: string
+              longText:
+                type: string
+              country:
+                type: string
+              province:
+                type: string
+              city:
+                type: string
+              languages:
+                type: string
+                description: list of languages separated by comma
+              tags:
+                type: string
+                description: list of tag separated by comma
+              images:
+                type: array
+                items:
+                  type: string
+              dates:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    date:
+                      type: string
+                    availablePlaces:
+                      type: integer
+      responses:
+        200:
+          description: New experience created
+
+    put:
+      operationId: api.experience.update
+      tags:
+        - Experience
+      summary: Update 1 existing  experience
+      description: Update 1 existing experience
+      parameters:
+        - name: token
+          in: header
+          type: string
+          description: Token created when user logged
+          required: True
+        - name: id
+          in: header
+          type: integer
+          description: User Id connected to the token
+          required: True
+        - name: language
+          in: query
+          description: Language using in client
+          type: string
+          required: True
+        - name: data
+          in: body
+          description: Data passed to create a new experience
+          required: True
+          schema:
+            type: object
+            properties:
+              id:
+                type: integer
+              title:
+                type: string
+              text:
+                type: string
+              country:
+                type: string
+              province:
+                type: string
+              city:
+                type: string
+              languages:
+                type: string
+                description: list of languages separated by comma
+              tags:
+                type: string
+                description: list of tag separated by comma
+              images:
+                type: array
+                items:
+                  type: string
+      responses:
+          200:
+            description: Experience updated successfully
+
+    delete:
+      operationId: api.experience.delete
+      tags:
+        - Experience
+      summary: Delete 1 existing  experience
+      description: Delete 1 existing experience
+      parameters:
+        - name: token
+          in: header
+          type: string
+          description: Token created when user logged
+          required: True
+        - name: id
+          in: header
+          type: integer
+          description: User Id connected to the token
+          required: True
+        - name: language
+          in: query
+          description: Language using in client
+          type: string
+          required: True
+        - name: idExperience
+          in: query
+          description: id that identify the Experience
+          type: integer
+          required: True
+      responses:
+          200:
+            description: Experience deleted successfully
+
+  /experience/date:
+      put:
+        operationId: api.experience.add_date
+        tags:
+          - Experience
+        summary: Add 1 new date for an existing experience
+        description: Add 1 new date for an existing experience
+        parameters:
+          - name: language
+            in: query
+            description: Language using in client
+            type: string
+            required: True
+          - name: token
+            in: header
+            type: string
+            description: Token created when user logged
+            required: True
+          - name: id
+            in: header
+            type: integer
+            description: User Id connected to the token
+            required: True
+          - name: data
+            in: body
+            description: Data passed to create a new data for an existing experience
+            required: True
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                  description: Id of the experience we want to add the new date
+                date:
+                  type: string
+                places:
+                  type: integer
+        responses:
+          200:
+            description: New experience created
+      delete:
+        operationId: api.experience.delete_date
+        tags:
+          - Experience
+        summary: Unbook 1 date for an existing experience
+        description: Unbook 1 date for an existing experience
+        parameters:
+          - name: language
+            in: query
+            description: Language using in client
+            type: string
+            required: True
+          - name: token
+            in: header
+            type: string
+            description: Token created when user logged
+            required: True
+          - name: id
+            in: header
+            type: integer
+            description: User Id connected to the token
+            required: True
+          - name: idExperience
+            in: query
+            type: integer
+            description: Id of the experience we want to add the new date
+            required: True
+          - name: date
+            in: query
+            type: string
+            description: date of specific experience we want to delete
+            required: True
+        responses:
+          200:
+            description: New experience created
+
+  /experience/bookDate:
+      put:
+        operationId: api.experience.book_date
+        tags:
+          - Experience
+        summary: Book 1 date for an experience
+        description: Book 1 date for an experience
+        parameters:
+          - name: language
+            in: query
+            description: Language using in client
+            type: string
+            required: True
+          - name: token
+            in: header
+            type: string
+            description: Token created when user logged
+            required: True
+          - name: id
+            in: header
+            type: integer
+            description: User Id connected to the token
+            required: True
+          - name: data
+            in: body
+            description: Data passed to book a data for an existing experience
+            required: True
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                  description: Id of the experience we want to book a date
+                date:
+                  type: string
+                places: 
+                  type: integer
+        responses:
+          200:
+            description: New experience created
+      delete:
+        operationId: api.experience.unbook_date
+        tags:
+          - Experience
+        summary: Delete 1 date for an existing experience
+        description: Delete 1 date for an existing experience
+        parameters:
+          - name: language
+            in: query
+            description: Language using in client
+            type: string
+            required: True
+          - name: token
+            in: header
+            type: string
+            description: Token created when user logged
+            required: True
+          - name: id
+            in: header
+            type: integer
+            description: User Id connected to the token
+            required: True
+          - name: idExperience
+            in: query
+            type: integer
+            description: Id of the experience we want to add the new date
+            required: True
+          - name: date
+            in: query
+            type: string
+            description: date of specific experience we want to delete
+            required: True
+        responses:
+          200:
+            description: New experience created
+
+  /experience/vote:
+    put:
+      operationId: api.experience.update_vote
+      tags:
+        - Experience
+      summary: Update 1 vote
+      description: Update 1 vote user does for 1 experience
+      parameters:
+        - name: token
+          in: header
+          type: string
+          description: Token created when user logged
+          required: True
+        - name: id
+          in: header
+          type: integer
+          description: User Id connected to the token
+          required: True
+        - name: language
+          in: query
+          description: Language using in client
+          type: string
+          required: True
+        - name: idExperience
+          in: query
+          description: Id that identify the experience voted
+          type: integer
+          required: True
+        - name: vote
+          in: query
+          description: Vote given (from 0 to 4)
+          type: integer
+          required: False
+      responses:
+          200:
+            description: Vote for experience updated successfully 
+
+  /city/list:
+    post:
+      operationId: api.city.read_list
+      tags:
+        - City
+      summary: Get list of places
+      description: Get list of places appling filters
+      parameters:
+        - name: token
+          in: header
+          type: string
+          description: Token created when user logged
+          required: False
+        - name: id
+          in: header
+          type: integer
+          description: User Id connected to the token
+          required: False
+        - name: language
+          in: query
+          description: Language using in client
+          type: string
+          required: True
+        - name: data
+          in: body
+          description: Filters passed by the client to get only the desired places
+          required: False
+          schema:
+            type: object
+            properties:
+              country:
+                type: string
+              province:
+                type: string
+              city:
+                type: string
+      responses:
+        200:
+          description: Tips list successfully get
+
+  /place/list:
+    post:
+      operationId: api.place.read_list
+      tags:
+        - Place
+      summary: Get list of places
+      description: Get list of places appling filters
+      parameters:
+        - name: token
+          in: header
+          type: string
+          description: Token created when user logged
+          required: False
+        - name: language
+          in: query
+          description: Language using in client
+          type: string
+          required: True
+        - name: confirmed
+          in: query
+          description: Based on this value you receive only confirmed place, not confirmed or all (0 = not confirmed, 1 = confirmed, 2 = all)
+          type: integer
+        - name: data
+          in: body
+          description: Filters passed by the client to get only the desired places
+          required: False
+          schema:
+            type: object
+            properties:
+              country:
+                type: string
+              province:
+                type: string
+              city:
+                type: string
+              tags:
+                type: string
+                description: list of tag separated by comma
+              dates:
+                type: string
+              text:
+                type: string
+                description: look for a word in title or text
+              languages:
+                type: string
+                description: look for places written in the same language/languages
+      responses:
+        200:
+          description: Tips list successfully get
+
+  /place:
+    post:
+      operationId: api.place.create
+      tags:
+        - Place
+      summary: Create 1 new place
+      description: Create 1 new place
+      parameters:
+        - name: language
+          in: query
+          description: Language using in client
+          type: string
+          required: True
+        - name: token
+          in: header
+          type: string
+          description: Token created when user logged
+          required: True
+        - name: id
+          in: header
+          type: integer
+          description: User Id connected to the token
+          required: True
+        - name: data
+          in: body
+          description: Data passed to create a new place
+          required: True
+          schema:
+            type: object
+            properties:
+              title:
+                type: string
+              text:
+                type: string
+              country:
+                type: string
+              province:
+                type: string
+              city:
+                type: string
+              language:
+                type: string
+                description: language used to suggest this place
+              tags:
+                type: string
+                description: list of tag separated by comma
+              images:
+                type: array
+                items:
+                  type: string
+      responses:
+        200:
+          description: New place created
+
+    put:
+      operationId: api.place.update
+      tags:
+        - Place
+      summary: Update 1 existing  place
+      description: Update 1 existing place
+      parameters:
+        - name: token
+          in: header
+          type: string
+          description: Token created when user logged
+          required: True
+        - name: id
+          in: header
+          type: integer
+          description: User Id connected to the token
+          required: True
+        - name: language
+          in: query
+          description: Language using in client
+          type: string
+          required: True
+        - name: data
+          in: body
+          description: Data passed to create a new place
+          required: True
+          schema:
+            type: object
+            properties:
+              id:
+                type: integer
+              title:
+                type: string
+              text:
+                type: string
+              country:
+                type: string
+              province:
+                type: string
+              city:
+                type: string
+              language:
+                type: string
+                description: language used to suggest this place
+              tags:
+                type: string
+                description: list of tag separated by comma
+              images:
+                type: array
+                items:
+                  type: string
+      responses:
+          200:
+            description: Place updated successfully
+
+    delete:
+      operationId: api.place.delete
+      tags:
+        - Place
+      summary: Update 1 existing  place
+      description: Delete 1 existing place
+      parameters:
+        - name: token
+          in: header
+          type: string
+          description: Token created when user logged
+          required: True
+        - name: id
+          in: header
+          type: integer
+          description: User Id connected to the token
+          required: True
+        - name: language
+          in: query
+          description: Language using in client
+          type: string
+          required: True
+        - name: idPlace
+          in: query
+          description: id that identify the Place
+          type: integer
+          required: True
+      responses:
+          200:
+            description: Place deleted successfully
+
+  /place/vote:
+    put:
+      operationId: api.place.update_vote
+      tags:
+        - Place
+      summary: Update 1 vote
+      description: Update 1 vote user does for 1 place
+      parameters:
+        - name: token
+          in: header
+          type: string
+          description: Token created when user logged
+          required: True
+        - name: id
+          in: header
+          type: integer
+          description: User Id connected to the token
+          required: True
+        - name: language
+          in: query
+          description: Language using in client
+          type: string
+          required: True
+        - name: idPlace
+          in: query
+          description: Id that identify the place voted
+          type: integer
+          required: True
+        - name: vote
+          in: query
+          description: Vote given (from 0 to 4)
+          type: integer
+          required: False
+      responses:
+          200:
+            description: Vote for place updated successfully 
+
+  /place/confirmNewPlace:
+    put:
+      operationId: api.place.confirm_new_place
+      tags:
+        - Place
+      summary: Approve 1 new place
+      description: Approve 1 place inserted
+      parameters:
+        - name: token
+          in: header
+          type: string
+          description: Token created when user logged
+          required: True
+        - name: id
+          in: header
+          type: integer
+          description: User Id connected to the token
+          required: True
+        - name: language
+          in: query
+          description: Language using in client
+          type: string
+          required: True
+        - name: idPlace
+          in: query
+          description: Language using in client
+          type: string
+          required: True
+      responses:
+          200:
+            description: New place approved successfully
+
+  /place/review:
+    get:
+      operationId: api.place.read_reviews
+      tags:
+        - Place
+      summary: Read all reviews of 1 place
+      description: Read all reviews of 1 place
+      parameters:
+        - name: language
+          in: query
+          description: Language using in client
+          type: string
+          required: True
+        - name: token
+          in: header
+          type: string
+          description: Token created when user logged
+          required: False
+        - name: id
+          in: header
+          type: integer
+          description: User Id connected to the token
+          required: False
+        - name: idPlace
+          in: query
+          description: id that identify the place we want get reviews
+          type: integer
+          required: True
+      responses:
+        200:
+          description: Tips list successfully get
+    
+    post:
+      operationId: api.place.create_review
+      tags:
+        - Place
+      summary: Create 1 new review
+      description: Create 1 new review
+      parameters:
+        - name: language
+          in: query
+          description: Language using in client
+          type: string
+          required: True
+        - name: token
+          in: header
+          type: string
+          description: Token created when user logged
+          required: True
+        - name: id
+          in: header
+          type: integer
+          description: User Id connected to the token
+          required: True
+        - name: data
+          in: body
+          description: Data passed to create a new place
+          required: True
+          schema:
+            type: object
+            properties:
+              idPlace:
+                type: integer
+              text:
+                type: string
+      responses:
+        200:
+          description: New review created
+
+    put:
+      operationId: api.place.update_review
+      tags:
+        - Place
+      summary: Update 1 existing  review
+      description: Update 1 existing review
+      parameters:
+        - name: language
+          in: query
+          description: Language using in client
+          type: string
+          required: True
+        - name: token
+          in: header
+          type: string
+          description: Token created when user logged
+          required: True
+        - name: id
+          in: header
+          type: integer
+          description: User Id connected to the token
+          required: True
+        - name: data
+          in: body
+          description: Data passed to create a new place
+          required: True
+          schema:
+            type: object
+            properties:
+              idReview:
+                type: integer
+              text:
+                type: string
+      responses:
+          200:
+            description: Place updated successfully
+
+    delete:
+      operationId: api.place.delete_review
+      tags:
+        - Place
+      summary: Delete 1 existing  review
+      description: Delete 1 existing review
+      parameters:
+        - name: token
+          in: header
+          type: string
+          description: Token created when user logged
+          required: True
+        - name: id
+          in: header
+          type: integer
+          description: User Id connected to the token
+          required: True
+        - name: language
+          in: query
+          description: Language using in client
+          type: string
+          required: True
+        - name: idReview
+          in: query
+          description: id that identify the review
+          type: integer
+          required: True
+      responses:
+          200:
+            description: Review deleted successfully
+
+  /place/review/like:
+    put:
+      operationId: api.place.update_like
+      tags:
+        - Place
+      summary: Update 1 like for a review
+      description: Update 1 like user does for 1 place
+      parameters:
+        - name: token
+          in: header
+          type: string
+          description: Token created when user logged
+          required: True
+        - name: id
+          in: header
+          type: integer
+          description: User Id connected to the token
+          required: True
+        - name: language
+          in: query
+          description: Language using in client
+          type: string
+          required: True
+        - name: idReview
+          in: query
+          description: Id that identify the review voted
+          type: integer
+          required: True
+        - name: like
+          in: query
+          description: Like or unlike given/removed to the review (1, -1 or 0)
+          type: integer
+          required: False
+      responses:
+          200:
+            description: Review like updated
+
+  /notification/:
+    get:
+      operationId: api.notification.read
+      tags:
+        - Notification
+      summary: Read all notification of 1 user
+      description: Read all notification of 1 user
+      parameters:
+        - name: language
+          in: query
+          description: Language using in client
+          type: string
+          required: True
+        - name: token
+          in: header
+          type: string
+          description: Token created when user logged
+          required: True
+        - name: id
+          in: header
+          type: integer
+          description: User Id connected to the token
+          required: True
+      responses:
+        200:
+          description: Tips list successfully get
+
+    delete:
+      operationId: api.notification.delete
+      tags:
+        - Notification
+      summary: Delete 1 existing  notification
+      description: Delete 1 existing notification
+      parameters:
+        - name: language
+          in: query
+          description: Language using in client
+          type: string
+          required: True
+        - name: idNotification
+          in: query
+          description: Notification user want to remove
+          type: string
+          required: True
+        - name: token
+          in: header
+          type: string
+          description: Token created when user logged
+          required: True
+        - name: id
+          in: header
+          type: integer
+          description: User Id connected to the token
+          required: True
+      responses:
+          200:
+            description: Review deleted successfully
+    
+    post:
+      operationId: api.notification.create
+      tags:
+        - Notification
+      summary: Create new notification for 1 user
+      description: Create new notification for 1 user
+      parameters:
+        - name: language
+          in: query
+          description: Language using in client
+          type: string
+          required: True
+        - name: token
+          in: header
+          type: string
+          description: Token created when user logged
+          required: True
+        - name: id
+          in: header
+          type: integer
+          description: User Id connected to the token
+          required: True
+        - name: data
+          in: body
+          description: Data passed to create a new place
+          required: True
+          schema:
+            type: object
+            properties:
+              title:
+                type: string
+              text:
+                type: string
+              idUser:
+                type: integer
+      responses:
+        200:
+          description: Tips list successfully get
+
+  /notification/visualized:  
+    put:
+      operationId: api.notification.visualized
+      tags:
+        - Notification
+      summary: Set visualized 1 notification
+      description: Set visualized 1 notification
+      parameters:
+        - name: language
+          in: query
+          description: Language using in client
+          type: string
+          required: True
+        - name: idNotification
+          in: query
+          description: Notification user want to remove
+          type: string
+          required: True
+        - name: token
+          in: header
+          type: string
+          description: Token created when user logged
+          required: True
+        - name: id
+          in: header
+          type: integer
+          description: User Id connected to the token
+          required: True
+        
+      responses:
+          200:
+            description: Review deleted successfully
+          

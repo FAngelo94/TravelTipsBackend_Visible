@@ -1,0 +1,12 @@
+docker-compose_debug.yml
+
+persistent/
+dump/
+conf/
+
+app/static/images
+
+app/__pycache__
+app/api/__pycache__
+app/dictionary/__pycache__
+app/models/__pycache__

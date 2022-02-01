@@ -1,0 +1,55 @@
+version: '3'
+
+services:
+  traveltips-server:
+    build: 'app/'
+    container_name: 'traveltips-server'
+    restart: unless-stopped
+    ports:
+    - 5000:5000
+    networks:
+      travel-net:
+    links: 
+      - db:db
+    volumes: 
+      - C:\Users\utente\Desktop\Angelo\Projects\TravelTipsBackend\app:/home/FAngelo94/TravelTipsBackend/app
+    command: "python app/app.py"
+  
+  db:
+    image: mysql:8.0
+    ports: 
+        - "3306:3306"
+    security_opt:
+      - seccomp:unconfined
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+        MYSQL_DATABASE: traveltips_database
+        MYSQL_USER: user
+        MYSQL_PASSWORD: test
+        MYSQL_ROOT_PASSWORD: test 
+    volumes:
+        - ./dump:/docker-entrypoint-initdb.d
+        - ./conf:/etc/mysql/conf.d
+        - ./persistent:/var/lib/mysql
+    networks:
+      travel-net:
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    links: 
+        - db:db
+    ports:
+        - 8000:80
+    environment:
+        MYSQL_USER: user
+        MYSQL_PASSWORD: test
+        MYSQL_ROOT_PASSWORD: test 
+    networks:
+      travel-net:
+      
+volumes:
+  persistent:
+
+networks:
+  travel-net:
+    
